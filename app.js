@@ -1,19 +1,6 @@
 // Variables
 let surveys = [];  // Tableau pour stocker les sondages
-
-// Charger les sondages depuis le localStorage au démarrage
-function loadSurveys() {
-    const storedSurveys = localStorage.getItem('surveys');
-    if (storedSurveys) {
-        surveys = JSON.parse(storedSurveys);
-    }
-    displaySurveys();
-}
-
-// Sauvegarder les sondages dans le localStorage
-function saveSurveys() {
-    localStorage.setItem('surveys', JSON.stringify(surveys));
-}
+let isAdmin = false;  // Flag pour déterminer si l'utilisateur est un admin
 
 // Fonction pour afficher/masquer le formulaire de connexion
 function toggleLoginForm() {
@@ -34,6 +21,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
 
     // Vérification des identifiants
     if (username === adminUsername && password === adminPassword) {
+        isAdmin = true;
         document.getElementById('login').style.display = 'none';  // Cacher le formulaire de login
         document.getElementById('poll').style.display = 'block';  // Afficher le sondage
         document.getElementById('admin-panel').style.display = 'block';  // Afficher le panel admin
@@ -43,7 +31,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     }
 });
 
-// Ajouter un sondage
+// Ajouter un sondage (réservé à l'admin)
 document.getElementById('add-survey-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -63,17 +51,23 @@ document.getElementById('add-survey-form').addEventListener('submit', function(e
     document.getElementById('survey-answers').value = '';
 });
 
-// Afficher les sondages
+// Afficher les sondages à tout le monde
 function displaySurveys() {
     const surveyList = document.getElementById('survey-list');
+    const pollList = document.getElementById('poll-list');
+    
+    // Effacer les sondages existants
     surveyList.innerHTML = '';
+    pollList.innerHTML = '';
 
+    // Afficher les sondages pour l'admin et tous les utilisateurs
     surveys.forEach((survey, index) => {
+        // Si l'utilisateur est admin, afficher l'option pour supprimer
         const listItem = document.createElement('li');
         listItem.innerHTML = `
             <strong>${survey.title}</strong><br>
             Réponses : ${survey.answers.join(', ')}
-            <button onclick="deleteSurvey(${index})">Supprimer</button>
+            ${isAdmin ? `<button onclick="deleteSurvey(${index})">Supprimer</button>` : ''}
             <ul>
                 ${survey.answers.map((answer, i) => `
                     <li>
@@ -83,15 +77,26 @@ function displaySurveys() {
                 `).join('')}
             </ul>
         `;
-        surveyList.appendChild(listItem);
+        
+        // Si l'utilisateur est un admin, afficher le formulaire d'administration
+        if (isAdmin) {
+            surveyList.appendChild(listItem);
+        } else {
+            pollList.appendChild(listItem);
+        }
     });
 }
 
-// Supprimer un sondage
+// Supprimer un sondage (réservé à l'admin)
 function deleteSurvey(index) {
     surveys.splice(index, 1);
     saveSurveys();  // Sauvegarder les sondages après suppression
     displaySurveys();
+}
+
+// Sauvegarder les sondages dans le localStorage
+function saveSurveys() {
+    localStorage.setItem('surveys', JSON.stringify(surveys));
 }
 
 // Gérer les votes (limité à un vote par utilisateur)
@@ -108,6 +113,15 @@ function vote(surveyIndex, answerIndex) {
     localStorage.setItem(`voted_${surveyIndex}`, true);  // Enregistrer le vote dans le localStorage
     saveSurveys();  // Sauvegarder les sondages après un vote
     displaySurveys();  // Mettre à jour l'affichage des sondages
+}
+
+// Charger les sondages au démarrage
+function loadSurveys() {
+    const storedSurveys = localStorage.getItem('surveys');
+    if (storedSurveys) {
+        surveys = JSON.parse(storedSurveys);
+    }
+    displaySurveys();
 }
 
 // Charger les sondages au démarrage
