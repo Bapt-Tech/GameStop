@@ -1,6 +1,20 @@
 // Variables
 let surveys = [];  // Tableau pour stocker les sondages
 
+// Charger les sondages depuis le localStorage au démarrage
+function loadSurveys() {
+    const storedSurveys = localStorage.getItem('surveys');
+    if (storedSurveys) {
+        surveys = JSON.parse(storedSurveys);
+    }
+    displaySurveys();
+}
+
+// Sauvegarder les sondages dans le localStorage
+function saveSurveys() {
+    localStorage.setItem('surveys', JSON.stringify(surveys));
+}
+
 // Fonction pour afficher/masquer le formulaire de connexion
 function toggleLoginForm() {
     const loginForm = document.getElementById('login');
@@ -43,6 +57,7 @@ document.getElementById('add-survey-form').addEventListener('submit', function(e
     };
 
     surveys.push(newSurvey);
+    saveSurveys();  // Sauvegarder les sondages après ajout
     displaySurveys();
     document.getElementById('survey-title').value = '';
     document.getElementById('survey-answers').value = '';
@@ -75,6 +90,7 @@ function displaySurveys() {
 // Supprimer un sondage
 function deleteSurvey(index) {
     surveys.splice(index, 1);
+    saveSurveys();  // Sauvegarder les sondages après suppression
     displaySurveys();
 }
 
@@ -90,5 +106,9 @@ function vote(surveyIndex, answerIndex) {
     // Augmenter le nombre de votes pour la réponse sélectionnée
     surveys[surveyIndex].votes[answerIndex]++;
     localStorage.setItem(`voted_${surveyIndex}`, true);  // Enregistrer le vote dans le localStorage
+    saveSurveys();  // Sauvegarder les sondages après un vote
     displaySurveys();  // Mettre à jour l'affichage des sondages
 }
+
+// Charger les sondages au démarrage
+loadSurveys();
