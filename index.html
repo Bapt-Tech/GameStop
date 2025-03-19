@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sondages & Jeux Interactifs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Sondages & Jeux Interactifs</h1>
+
+    <!-- Bouton pour afficher la connexion -->
+    <button id="login-toggle" onclick="toggleLoginForm()">Connexion</button>
+
+    <!-- Formulaire de connexion caché par défaut -->
+    <section id="login" style="display:none;">
+        <h2>Connexion Administrateur</h2>
+        <form id="login-form">
+            <label for="username">Nom d'utilisateur:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Mot de passe:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Se connecter</button>
+        </form>
+        <p id="login-error" style="color:red; display:none;">Nom d'utilisateur ou mot de passe incorrect</p>
+    </section>
+
+    <!-- Panel Administrateur -->
+    <section id="admin-panel" style="display:none;">
+        <h2>Panel Administrateur</h2>
+        <h3>Ajouter un sondage</h3>
+        <form id="add-survey-form">
+            <label for="survey-title">Titre du sondage :</label>
+            <input type="text" id="survey-title" required>
+            <label for="survey-answers">Réponses (séparées par des virgules) :</label>
+            <input type="text" id="survey-answers" required>
+            <button type="submit">Ajouter</button>
+        </form>
+
+        <h3>Sondages existants</h3>
+        <ul id="survey-list"></ul>
+    </section>
+
+    <!-- Section Sondage -->
+    <section id="poll" style="display:none;">
+        <h2>Sondage</h2>
+        <ul id="poll-list"></ul>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
